@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { getProduct, type AudienceId, type SpecChoice } from "@/lib/catalog";
+import { QTY_MAX, parseQtyInput } from "@/lib/qty";
 
 export type Draft = {
   audience: AudienceId;
@@ -39,9 +40,13 @@ export const emptyDraft = (): Draft => ({
   qty: 1,
 });
 
-function clampQty(value: number) {
-  if (!Number.isFinite(value)) return 1;
-  return Math.max(1, Math.min(9999, Math.round(value)));
+function acceptedQty(value: number) {
+  const parsed = parseQtyInput(String(value));
+  return parsed.ok ? parsed.qty : null;
+}
+
+function sumQty(left: number, right: number) {
+  return Math.min(QTY_MAX, left + right);
 }
 
 function lineKey(productId: string, draft: Draft, hasPair: boolean) {
@@ -58,21 +63,27 @@ export const useOrder = create<OrderState>()(
       setDraft: (productId, patch) => {
         const current = get().drafts[productId] ?? emptyDraft();
         const next = { ...current, ...patch };
-        if (patch.qty !== undefined) next.qty = clampQty(patch.qty);
+        if (patch.qty !== undefined) {
+          const qty = acceptedQty(patch.qty);
+          if (qty === null) return;
+          next.qty = qty;
+        }
         set({ drafts: { ...get().drafts, [productId]: next } });
       },
       addLine: (productId) => {
         const product = getProduct(productId);
         if (!product) return;
         const draft = get().drafts[productId] ?? emptyDraft();
-        const qty = clampQty(draft.qty);
+        const qty = acceptedQty(draft.qty);
+        if (qty === null) return;
         const key = lineKey(productId, draft, Boolean(product.pair));
         const lines = get().lines;
         const found = lines.find((line) => line.key === key);
         if (found) {
+          const merged = sumQty(found.qty, qty);
           set({
             lines: lines.map((line) =>
-              line.key === key ? { ...line, qty: clampQty(line.qty + qty) } : line,
+              line.key === key ? { ...line, qty: merged } : line,
             ),
           });
           return;
@@ -98,11 +109,20 @@ export const useOrder = create<OrderState>()(
         const current = lines[index];
         const product = getProduct(current.productId);
         if (!product) return;
+        let qty = current.qty;
+        if (patch.qty !== undefined) {
+          const nextQty = acceptedQty(patch.qty);
+          if (nextQty === null) {
+            if (patch.audience === undefined && patch.color === undefined && patch.size === undefined) return;
+          } else {
+            qty = nextQty;
+          }
+        }
         const nextDraft: Draft = {
           audience: patch.audience ?? current.audience,
           color: patch.color ?? current.color,
           size: patch.size ?? current.size,
-          qty: patch.qty !== undefined ? clampQty(patch.qty) : current.qty,
+          qty,
         };
         const nextKey = lineKey(current.productId, nextDraft, Boolean(product.pair));
         if (nextKey === key) {
@@ -116,7 +136,7 @@ export const useOrder = create<OrderState>()(
         if (twinIndex >= 0) {
           const copy = without.slice();
           const twin = copy[twinIndex];
-          copy[twinIndex] = { ...twin, qty: clampQty(twin.qty + nextDraft.qty) };
+          copy[twinIndex] = { ...twin, qty: sumQty(twin.qty, nextDraft.qty) };
           set({ lines: copy });
           return;
         }

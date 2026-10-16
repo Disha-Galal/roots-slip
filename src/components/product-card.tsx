@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   AUDIENCE_OPTIONS,
@@ -8,6 +8,7 @@ import {
 } from "@/lib/catalog";
 import { emptyDraft, useOrder, type Draft } from "@/lib/order-store";
 import { ProductGallery } from "@/components/product-gallery";
+import { QtyField, type QtyCommit } from "@/components/qty-field";
 
 function ChoiceRow({
   label,
@@ -57,6 +58,8 @@ export function ProductControls({
   const setDraft = useOrder((state) => state.setDraft);
   const addLine = useOrder((state) => state.addLine);
   const [notice, setNotice] = useState("");
+  const qtyApi = useRef<QtyCommit | null>(null);
+  const caption = codeCaption(product, draft.audience);
 
   function patch(next: Partial<Draft>) {
     setDraft(product.id, next);
@@ -76,7 +79,7 @@ export function ProductControls({
             </Link>
           </h3>
         )}
-        <p className="mt-1 text-sm font-semibold text-gold-deep">{codeCaption(product, draft.audience)}</p>
+        {caption ? <p className="mt-1 text-sm font-semibold text-gold-deep">{caption}</p> : null}
         {product.note ? <p className="mt-1 text-sm leading-relaxed text-stone">{product.note}</p> : null}
       </div>
 
@@ -101,52 +104,26 @@ export function ProductControls({
         options={SPEC_OPTIONS}
         onChange={(id) => patch({ size: id as Draft["size"] })}
       />
-      <p className="text-sm leading-relaxed text-stone">
-        الألوان والمقاسات في الكتالوج لسه «تُحدَّد عند الطلب». مش لازم تختارهم عشان تسأل على سعر الجملة.
-      </p>
-
-      <div>
-        <p className="mb-2 text-sm font-semibold text-fg">الكمية</p>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            aria-label="تقليل الكمية"
-            onClick={() => patch({ qty: draft.qty - 1 })}
-            className="min-h-11 min-w-11 rounded-lg border border-line bg-cream text-lg font-bold text-fg"
-          >
-            −
-          </button>
-          <input
-            inputMode="numeric"
-            aria-label="الكمية"
-            value={draft.qty}
-            onChange={(event) => patch({ qty: Number(event.target.value) })}
-            className="h-11 w-20 rounded-lg border border-line bg-paper text-center text-base font-semibold tabular-nums"
-          />
-          <button
-            type="button"
-            aria-label="زيادة الكمية"
-            onClick={() => patch({ qty: draft.qty + 1 })}
-            className="min-h-11 min-w-11 rounded-lg border border-line bg-cream text-lg font-bold text-fg"
-          >
-            +
-          </button>
-        </div>
-      </div>
+      <QtyField
+        value={draft.qty}
+        inputLabel={`الكمية المطلوبة لـ ${product.name}`}
+        fieldId={product.id}
+        apiRef={qtyApi}
+        onCommit={(qty) => patch({ qty })}
+      />
 
       <div className="mt-auto flex flex-col gap-2">
         {notice ? (
           <p className="text-sm font-medium text-gold-deep" role="status">
             {notice}
           </p>
-        ) : (
-          <p className="text-sm text-stone">السعر: اطلب عرض سعر للجملة. مفيش رقم على الموقع.</p>
-        )}
+        ) : null}
         <button
           type="button"
           onClick={() => {
+            if (!qtyApi.current?.commit()) return;
             addLine(product.id);
-            setNotice("اتضاف لطلب التسعير. لو زودت نفس التشكيلة تاني، الكمية هتتجمع.");
+            setNotice("اتضاف لطلب التسعير. نفس التشكيلة بتتجمع في بند واحد.");
           }}
           className="inline-flex min-h-12 items-center justify-center rounded-lg bg-gold px-3 text-center text-sm font-bold text-ink"
         >
@@ -165,7 +142,7 @@ export function ProductCard({ product }: { product: Product }) {
       : draft.audience === "baby"
         ? product.pair.baby
         : `${product.pair.girl} / ${product.pair.baby}`
-    : (product.code ?? "يُضاف");
+    : (product.code ?? "");
 
   return (
     <article className="card-shadow flex flex-col overflow-hidden rounded-2xl border border-line bg-paper">

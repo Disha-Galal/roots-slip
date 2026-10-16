@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
 import type { ProductImage } from "@/lib/catalog";
 
 export function ProductGallery({
@@ -14,18 +15,9 @@ export function ProductGallery({
 }) {
   const [index, setIndex] = useState(0);
   const [zoom, setZoom] = useState(false);
+  const openRef = useRef<HTMLButtonElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
   const current = images[Math.min(index, images.length - 1)] ?? images[0];
-
-  useEffect(() => {
-    if (!zoom) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setZoom(false);
-      if (event.key === "ArrowLeft") setIndex((value) => (value + 1) % images.length);
-      if (event.key === "ArrowRight") setIndex((value) => (value - 1 + images.length) % images.length);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [zoom, images.length]);
 
   if (!current) return null;
 
@@ -33,6 +25,7 @@ export function ProductGallery({
     <div>
       <button
         type="button"
+        ref={openRef}
         onClick={() => setZoom(true)}
         className="relative block aspect-square w-full bg-cream-2"
       >
@@ -45,9 +38,11 @@ export function ProductGallery({
           decoding="async"
           className="size-full object-contain"
         />
-        <span className="absolute bottom-3 start-3 rounded-md bg-ink px-2.5 py-1 text-sm font-bold text-gold">
-          {badge}
-        </span>
+        {badge ? (
+          <span className="absolute bottom-3 start-3 rounded-md bg-ink px-2.5 py-1 text-sm font-bold text-gold">
+            {badge}
+          </span>
+        ) : null}
       </button>
       {images.length > 1 ? (
         <div className="flex min-w-0 max-w-full gap-2 overflow-x-auto p-3">
@@ -68,48 +63,62 @@ export function ProductGallery({
           ))}
         </div>
       ) : null}
-      {zoom ? (
-        <div
-          className="fixed inset-0 z-50 flex flex-col bg-ink/95 p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-label={name}
-        >
-          <div className="mb-3 flex items-center justify-between gap-2">
-            <p className="text-sm font-semibold text-cream">{name}</p>
-            <button
-              type="button"
-              onClick={() => setZoom(false)}
-              className="min-h-11 rounded-lg bg-gold px-4 text-sm font-bold text-ink"
-            >
-              إغلاق
-            </button>
-          </div>
-          <img
-            src={current.src}
-            alt={current.alt}
-            className="m-auto max-h-[70vh] w-full object-contain"
-          />
-          {images.length > 1 ? (
-            <div className="mt-3 flex justify-center gap-2">
-              <button
-                type="button"
-                onClick={() => setIndex((value) => (value - 1 + images.length) % images.length)}
-                className="min-h-11 rounded-lg border border-cream px-4 text-sm font-bold text-cream"
-              >
-                السابقة
-              </button>
-              <button
-                type="button"
-                onClick={() => setIndex((value) => (value + 1) % images.length)}
-                className="min-h-11 rounded-lg border border-cream px-4 text-sm font-bold text-cream"
-              >
-                التالية
-              </button>
+      <Dialog.Root open={zoom} onOpenChange={setZoom}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/95" />
+          <Dialog.Content
+            className="fixed inset-0 z-50 flex flex-col p-4 outline-none"
+            aria-describedby="zoom-desc"
+            onOpenAutoFocus={(event) => {
+              event.preventDefault();
+              closeRef.current?.focus();
+            }}
+            onCloseAutoFocus={(event) => {
+              event.preventDefault();
+              openRef.current?.focus();
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "ArrowLeft") setIndex((value) => (value + 1) % images.length);
+              if (event.key === "ArrowRight") setIndex((value) => (value - 1 + images.length) % images.length);
+            }}
+          >
+            <div className="mb-3 flex items-center justify-between gap-2">
+              <Dialog.Title className="text-sm font-semibold text-cream">{name}</Dialog.Title>
+              <Dialog.Close asChild>
+                <button
+                  ref={closeRef}
+                  type="button"
+                  className="min-h-11 rounded-lg bg-gold px-4 text-sm font-bold text-ink"
+                >
+                  إغلاق
+                </button>
+              </Dialog.Close>
             </div>
-          ) : null}
-        </div>
-      ) : null}
+            <Dialog.Description id="zoom-desc" className="sr-only">
+              تكبير صورة {name}
+            </Dialog.Description>
+            <img src={current.src} alt={current.alt} className="m-auto max-h-[70vh] w-full object-contain" />
+            {images.length > 1 ? (
+              <div className="mt-3 flex justify-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIndex((value) => (value - 1 + images.length) % images.length)}
+                  className="min-h-11 rounded-lg border border-cream px-4 text-sm font-bold text-cream"
+                >
+                  السابقة
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIndex((value) => (value + 1) % images.length)}
+                  className="min-h-11 rounded-lg border border-cream px-4 text-sm font-bold text-cream"
+                >
+                  التالية
+                </button>
+              </div>
+            ) : null}
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </div>
   );
 }

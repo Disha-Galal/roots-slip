@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Factory, Gem, MessagesSquare, Scissors } from "lucide-react";
 import { ProductCard } from "@/components/product-card";
@@ -19,6 +19,7 @@ import {
   waIntro,
   type CategoryId,
 } from "@/lib/catalog";
+import { modelCountLabel } from "@/lib/arabic-count";
 import { rehydrateOrder, useOrder } from "@/lib/order-store";
 
 export const Route = createFileRoute("/")({
@@ -50,7 +51,7 @@ const FEATURES = [
   {
     icon: Scissors,
     title: "تقفيل المصنع",
-    text: "التقفيل من شغل المصنع. أي تفصيلة زيادة تتأكد مع عرض السعر، من غير ضمان مكتوب هنا.",
+    text: "تقفيل المصنع على موديلات التشكيلة. أي تفصيلة إضافية تتأكد مع عرض السعر.",
   },
   {
     icon: MessagesSquare,
@@ -82,19 +83,18 @@ const BUSINESS = {
   },
 };
 
-function countLabel(n: number) {
-  if (n === 0) return "مفيش نتائج";
-  if (n === 1) return "موديل واحد";
-  if (n === 2) return "موديلان";
-  return `${n} موديلات`;
-}
-
 function Home() {
   const [filter, setFilter] = useState<"all" | CategoryId>("all");
   const [query, setQuery] = useState("");
   const [quoteOpen, setQuoteOpen] = useState(false);
-  const lineCount = useOrder((state) => state.lines.length);
+  const quoteOpener = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  function openQuote(event: MouseEvent<HTMLElement>) {
+    quoteOpener.current = event.currentTarget;
+    setQuoteOpen(true);
+  }
+  const lineCount = useOrder((state) => state.lines.length);
 
   useEffect(() => {
     rehydrateOrder();
@@ -132,7 +132,7 @@ function Home() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
-            <QuoteButton count={lineCount} onClick={() => setQuoteOpen(true)} />
+            <QuoteButton count={lineCount} onClick={openQuote} />
             <a
               href={waIntro()}
               target="_blank"
@@ -156,8 +156,7 @@ function Home() {
               روتس.. الأصل بيفرق في كل خطوة
             </h1>
             <p className="mt-4 max-w-xl text-base leading-relaxed text-cream/90">
-              مصنع شباشب وسابوه للتجار والمحلات. تصنيع مباشر، وتشكيلة الموسم قدامك عشان تجهّز
-              استفسار تسعير جملة على واتساب. القطاعي مش مسار البيع الأساسي.
+              مصنع شباشب وسابوه. تصنيع مباشر وتوريد جملة للتجار والمحلات. التشكيلة قدامك، وجهّز طلب التسعير على واتساب.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <a
@@ -168,7 +167,7 @@ function Home() {
               </a>
               <button
                 type="button"
-                onClick={() => setQuoteOpen(true)}
+                onClick={openQuote}
                 className="inline-flex min-h-12 items-center justify-center rounded-lg border border-cream px-5 text-center text-base font-bold text-cream"
               >
                 طلب تسعير الجملة
@@ -207,10 +206,10 @@ function Home() {
             <div>
               <h2 className="text-2xl font-extrabold">كتالوج الموسم</h2>
               <p className="mt-2 max-w-2xl text-stone">
-                دور بالاسم أو الكود. اللون والمقاس اختياريين لو لسه بتسأل على سعر الجملة.
+                دور بالاسم أو الكود. اللون والمقاس اختياريان لطلب التسعير: «يُحدّد لاحقًا» أو «تشكيلة مختلطة». الأسعار غير منشورة هنا.
               </p>
             </div>
-            <p className="text-sm font-semibold text-gold-deep">{countLabel(visible.length)}</p>
+            <p className="text-sm font-semibold text-gold-deep">{modelCountLabel(visible.length)}</p>
           </div>
 
           <label className="mt-5 block text-sm font-semibold">
@@ -274,7 +273,7 @@ function Home() {
             <p className="text-sm font-semibold text-gold">للتجار والمحلات</p>
             <h2 className="mt-2 text-3xl font-extrabold">اطلب عرض سعر للجملة</h2>
             <p className="mt-4 leading-relaxed text-cream/90">
-              مفيش سعر ثابت على الموقع. جمّع الموديلات والكميات، وابعت طلب التسعير على واتساب.
+              مفيش سعر منشور على الموقع. جمّع الموديلات والكمية المطلوبة، وابعت طلب التسعير على واتساب.
               اللون والمقاس تقدر تسيبهم «يُحدّد لاحقًا» أو تختار تشكيلة مختلطة.
             </p>
           </div>
@@ -282,11 +281,11 @@ function Home() {
             <ul className="space-y-3 text-sm leading-relaxed">
               <li>تصنيع مباشر من المصنع.</li>
               <li>نفس أسماء وأكواد كتالوج الموسم.</li>
-              <li>الشحن والتوافر بيتأكدوا مع عرض السعر، من غير مدة أو تكلفة مكتوبين هنا.</li>
+              <li>الشحن والتوافر بيتأكدوا مع عرض السعر.</li>
             </ul>
             <button
               type="button"
-              onClick={() => setQuoteOpen(true)}
+              onClick={openQuote}
               className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-gold px-4 text-base font-bold text-ink"
             >
               افتح طلب التسعير
@@ -297,7 +296,7 @@ function Home() {
 
       <section id="ad" className="mx-auto max-w-6xl px-4 py-14">
         <h2 className="text-2xl font-extrabold">إعلان الموسم والكتالوج</h2>
-        <p className="mt-2 max-w-2xl text-stone">الإعلان مش بيشتغل لوحده. اضغط تشغيل لما تحب.</p>
+        <p className="mt-2 max-w-2xl text-stone">شاهد إعلان الموسم.</p>
         <div className="mt-6 grid min-w-0 items-start gap-6 md:grid-cols-2">
           <div className="min-w-0">
             <video
@@ -321,7 +320,7 @@ function Home() {
           <div className="rounded-2xl border border-line bg-paper p-5">
             <h3 className="text-lg font-bold">ملف الكتالوج</h3>
             <p className="mt-2 text-sm leading-relaxed text-stone">
-              نفس تشكيلة الموقع. الأسعار في الملف لسه فاضية، والعرض بيتحدد على واتساب.
+              نفس تشكيلة الموقع. للحصول على عرض سعر الجملة، تواصل مع المصنع.
             </p>
             <a
               href={CATALOG_PDF}
@@ -380,7 +379,7 @@ function Home() {
           ROOTS SLIPPERS · شبرا الخيمة
         </div>
       </footer>
-      <QuoteSheet open={quoteOpen} onClose={() => setQuoteOpen(false)} />
+      <QuoteSheet open={quoteOpen} onClose={() => setQuoteOpen(false)} returnFocusRef={quoteOpener} />
     </div>
   );
 }

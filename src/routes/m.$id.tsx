@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ProductControls } from "@/components/product-card";
 import { ProductGallery } from "@/components/product-gallery";
@@ -40,6 +40,7 @@ function ModelPage() {
   const draft = useOrder((state) => (product ? state.drafts[product.id] : undefined)) ?? emptyDraft();
   const lineCount = useOrder((state) => state.lines.length);
   const [quoteOpen, setQuoteOpen] = useState(false);
+  const quoteOpener = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     rehydrateOrder();
@@ -71,7 +72,13 @@ function ModelPage() {
             <span className="font-display text-2xl leading-none tracking-wide">ROOTS</span>
           </Link>
           <div className="flex items-center gap-2">
-            <QuoteButton count={lineCount} onClick={() => setQuoteOpen(true)} />
+            <QuoteButton
+              count={lineCount}
+              onClick={(event) => {
+                quoteOpener.current = event.currentTarget;
+                setQuoteOpen(true);
+              }}
+            />
             <a
               href={waIntro()}
               target="_blank"
@@ -103,7 +110,7 @@ function ModelPage() {
                       : draft.audience === "baby"
                         ? product.pair.baby
                         : `${product.pair.girl} / ${product.pair.baby}`
-                    : (product.code ?? "يُضاف")
+                    : (product.code ?? "")
                 }
               />
             </div>
@@ -124,7 +131,11 @@ function ModelPage() {
           </a>
         </p>
       </main>
-      <QuoteSheet open={quoteOpen} onClose={() => setQuoteOpen(false)} />
+      <QuoteSheet
+        open={quoteOpen}
+        onClose={() => setQuoteOpen(false)}
+        returnFocusRef={quoteOpener}
+      />
     </div>
   );
 }

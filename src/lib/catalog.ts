@@ -46,8 +46,6 @@ export const AUDIENCE_OPTIONS: { id: AudienceId; label: string }[] = [
   { id: "baby", label: "بيبي" },
 ];
 
-const pendingNote = "الكود لسه مكتوب «يُضاف» في الكتالوج، ومفيش كود متسجل هنا.";
-
 export const PRODUCTS: Product[] = [
   {
     id: "d75",
@@ -61,10 +59,9 @@ export const PRODUCTS: Product[] = [
     id: "d78",
     name: "سابوه حريمي فرو بفيونكات",
     category: "women",
-    summary: "فرو مقفول بفيونكات صغيرة. مش المفتوح ذو الفيونكة الكبيرة.",
+    summary: "فرو مقفول بفيونكات صغيرة.",
     code: "D78",
     images: [{ src: "/products/c/d78.jpg", alt: "سابوه حريمي فرو مقفول بفيونكات كود D78 من كتالوج روتس" }],
-    note: "صورة الكتالوج المعتمد للموديل المقفول. المفتوح بفيونكة كبيرة موديل تاني ولسه من غير كود.",
   },
   {
     id: "loafer",
@@ -72,8 +69,7 @@ export const PRODUCTS: Product[] = [
     category: "women",
     summary: "لوفر شتوي ببطانة فرو.",
     code: null,
-    images: [{ src: "/products/c/loafer.jpg", alt: "لوفر شتوي مبطن بالفرو من كتالوج روتس، الكود لم يُضف بعد" }],
-    note: pendingNote,
+    images: [{ src: "/products/c/loafer.jpg", alt: "لوفر شتوي مبطن بالفرو من كتالوج روتس" }],
   },
   {
     id: "d55",
@@ -105,8 +101,7 @@ export const PRODUCTS: Product[] = [
     category: "women",
     summary: "سابوه مفتوح بفيونكة كبيرة.",
     code: null,
-    images: [{ src: "/products/c/open-bow.jpg", alt: "سابوه فرو مفتوح بفيونكة من كتالوج روتس، الكود لم يُضف بعد" }],
-    note: pendingNote,
+    images: [{ src: "/products/c/open-bow.jpg", alt: "سابوه فرو مفتوح بفيونكة من كتالوج روتس" }],
   },
   {
     id: "bow-heart",
@@ -114,8 +109,7 @@ export const PRODUCTS: Product[] = [
     category: "women",
     summary: "فرو بفيونكة وعلى الصدر قلب.",
     code: null,
-    images: [{ src: "/products/c/bow-heart.jpg", alt: "سابوه فرو بفيونكة وقلب من كتالوج روتس، الكود لم يُضف بعد" }],
-    note: pendingNote,
+    images: [{ src: "/products/c/bow-heart.jpg", alt: "سابوه فرو بفيونكة وقلب من كتالوج روتس" }],
   },
   {
     id: "face-bow",
@@ -123,8 +117,7 @@ export const PRODUCTS: Product[] = [
     category: "women",
     summary: "وجه فرو مجسّم مع فيونكة.",
     code: null,
-    images: [{ src: "/products/c/face-bow.jpg", alt: "سابوه فرو وجه بفيونكة من كتالوج روتس، الكود لم يُضف بعد" }],
-    note: pendingNote,
+    images: [{ src: "/products/c/face-bow.jpg", alt: "سابوه فرو وجه بفيونكة من كتالوج روتس" }],
   },
   {
     id: "d30",
@@ -140,8 +133,7 @@ export const PRODUCTS: Product[] = [
     category: "women",
     summary: "بوت فرو بكرات وفيونكة.",
     code: null,
-    images: [{ src: "/products/c/boot-pom.jpg", alt: "بوت فرو بكرات وفيونكة من كتالوج روتس، الكود لم يُضف بعد" }],
-    note: pendingNote,
+    images: [{ src: "/products/c/boot-pom.jpg", alt: "بوت فرو بكرات وفيونكة من كتالوج روتس" }],
   },
   {
     id: "boot-high",
@@ -149,14 +141,13 @@ export const PRODUCTS: Product[] = [
     category: "women",
     summary: "بوت فرو بنعل مرتفع.",
     code: null,
-    images: [{ src: "/products/c/boot-high.jpg", alt: "بوت فرو بنعل مرتفع من كتالوج روتس، الكود لم يُضف بعد" }],
-    note: pendingNote,
+    images: [{ src: "/products/c/boot-high.jpg", alt: "بوت فرو بنعل مرتفع من كتالوج روتس" }],
   },
   {
     id: "g24",
     name: "سابوه بناتي وبيبي بفيونكة",
     category: "girls",
-    summary: "شخصيات فرو بفيونكة. الكتالوج فيه صورتين لنفس الكود.",
+    summary: "شخصيات فرو بفيونكة.",
     code: null,
     pair: { girl: "G24", baby: "B24" },
     images: [
@@ -188,8 +179,7 @@ export const PRODUCTS: Product[] = [
     category: "kids",
     summary: "فرو على شكل وجه كلب.",
     code: null,
-    images: [{ src: "/products/c/dog-face.jpg", alt: "سابوه فرو وجه كلب من كتالوج روتس، الكود لم يُضف بعد" }],
-    note: pendingNote,
+    images: [{ src: "/products/c/dog-face.jpg", alt: "سابوه فرو وجه كلب من كتالوج روتس" }],
   },
   {
     id: "kuromi",
@@ -197,8 +187,7 @@ export const PRODUCTS: Product[] = [
     category: "kids",
     summary: "سابوه مبطّن مطبوع بشخصية كورومي.",
     code: null,
-    images: [{ src: "/products/c/kuromi.jpg", alt: "سابوه كورومي مبطن من كتالوج روتس، الكود لم يُضف بعد" }],
-    note: pendingNote,
+    images: [{ src: "/products/c/kuromi.jpg", alt: "سابوه كورومي مبطن من كتالوج روتس" }],
   },
   {
     id: "kitty",
@@ -206,8 +195,7 @@ export const PRODUCTS: Product[] = [
     category: "kids",
     summary: "فرو وردي على شكل كيتي.",
     code: null,
-    images: [{ src: "/products/c/kitty.jpg", alt: "سابوه كيتي فرو وردي من كتالوج روتس، الكود لم يُضف بعد" }],
-    note: pendingNote,
+    images: [{ src: "/products/c/kitty.jpg", alt: "سابوه كيتي فرو وردي من كتالوج روتس" }],
   },
   {
     id: "dog-white",
@@ -215,8 +203,7 @@ export const PRODUCTS: Product[] = [
     category: "kids",
     summary: "فرو وجه كلب أبيض.",
     code: null,
-    images: [{ src: "/products/c/dog-white.jpg", alt: "سابوه فرو وجه كلب أبيض من كتالوج روتس، الكود لم يُضف بعد" }],
-    note: pendingNote,
+    images: [{ src: "/products/c/dog-white.jpg", alt: "سابوه فرو وجه كلب أبيض من كتالوج روتس" }],
   },
 ];
 
@@ -245,7 +232,7 @@ export function resolveCode(product: Product, audience: AudienceId) {
 
 export function codeCaption(product: Product, audience: AudienceId) {
   const code = resolveCode(product, audience);
-  if (!code) return "الكود: لسه مش متسجل في الكتالوج";
+  if (!code) return "";
   if (product.pair && audience === "unset") return `الكود: ${code} — الفئة غير محددة`;
   return `الكود: ${code}`;
 }
@@ -284,7 +271,8 @@ export function quoteMessage(
     if (!product) return;
     const code = resolveCode(product, line.audience);
     parts.push(`${index + 1}) ${product.name}`);
-    parts.push(code ? `الكود: ${code}` : "الكود: لم يُسجَّل بعد في الكتالوج");
+    parts.push(`الصفحة: ${SITE_URL}/m/${product.id}`);
+    parts.push(code ? `الكود: ${code}` : "الكود: غير مضاف في الكتالوج");
     if (product.pair) parts.push(`الفئة: ${audienceLabel(line.audience)}`);
     parts.push(`الكمية: ${line.qty}`);
     parts.push(`اللون: ${specLabel(line.color)}`);
