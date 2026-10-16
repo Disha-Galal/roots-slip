@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "ROOTS SLIPPERS | كتالوج الجملة — مصنع شباشب وسابوه",
+      "hasCanvas": false,
+      "bodyTextLen": 8525,
+      "bodyTextHash": "e55033771952dba45ebd619b084f6ef328508a6181fb3e20c925d911d1052c44",
+      "bodyTextPrefix": "ROOTS SLIPPERS الكتالوج الجملة الإعلان التواصل طلب الجملة 0 واتس",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "ROOTS SLIPPERS | كتالوج الجملة — مصنع شباشب وسابوه",
+      "hasCanvas": false,
+      "bodyTextLen": 8525,
+      "bodyTextHash": "e55033771952dba45ebd619b084f6ef328508a6181fb3e20c925d911d1052c44",
+      "bodyTextPrefix": "ROOTS SLIPPERS الكتالوج الجملة الإعلان التواصل طلب الجملة 0 واتس",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}
